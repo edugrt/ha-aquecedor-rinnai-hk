@@ -26,8 +26,8 @@ class RinnaiHeaterPrioritySwitch(SwitchEntity):
         self._key = "device_ip_priority"
 
         self._attr_has_entity_name = True
-        self._attr_unique_id = "priority"
-        self._attr_translation_key = self._attr_unique_id
+        self._attr_translation_key = "priority"
+        self._attr_unique_id = f"{self._heater._serial}_{self._attr_translation_key}"
 
     async def async_added_to_hass(self):
         await self._heater.async_add_rinnai_heater_sensor(self._heater_data_updated)

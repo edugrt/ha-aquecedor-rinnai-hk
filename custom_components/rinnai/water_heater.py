@@ -31,8 +31,8 @@ class RinnaiHeaterWaterHeater(WaterHeaterEntity):
         self._heater = heater
 
         self._attr_has_entity_name = True
-        self._attr_unique_id = "heater"
-        self._attr_translation_key = self._attr_unique_id
+        self._attr_translation_key = "heater"
+        self._attr_unique_id = f"{self._heater._serial}_{self._attr_translation_key}"
 
         self._attr_min_temp = 35
         self._attr_max_temp = 60
@@ -119,7 +119,7 @@ class RinnaiHeaterWaterHeater(WaterHeaterEntity):
     @property
     def available(self) -> dict[str, Any] | None:
         return self._heater.is_connected()
-    
+
     @property
     def capability_attributes(self) -> dict[str, Any]:
         # https://github.com/home-assistant/core/pull/130722/files

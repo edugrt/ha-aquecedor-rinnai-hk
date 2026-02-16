@@ -28,8 +28,8 @@ class RinnaiHeaterTemperatureButton(ButtonEntity):
         self._increase = increase
 
         self._attr_has_entity_name = True
-        self._attr_unique_id = "temperature_increase" if increase else "temperature_decrease"
-        self._attr_translation_key = self._attr_unique_id
+        self._attr_translation_key = "temperature_increase" if increase else "temperature_decrease"
+        self._attr_unique_id = f"{self._heater._serial}_{self._attr_translation_key}"
 
     async def async_press(self):
         if self._heater._auto_priority:

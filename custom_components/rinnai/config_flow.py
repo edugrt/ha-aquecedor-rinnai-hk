@@ -34,6 +34,7 @@ async def async_try_get_serial(hass: HomeAssistant, ip_address: str) -> str:
         data = read.split(",")
         return data[19]
     except Exception as ex:
+        _LOGGER.error("Error connecting to Rinnai heater at %s: %s", ip_address, ex)
         raise CannotConnect from ex
 
 

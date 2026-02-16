@@ -96,6 +96,7 @@ class RinnaiHeater:
         self._reading = False
         self._name = entry.title
         self._auto_priority = entry.data.get(CONF_AUTO_PRIORITY, DEFAULT_AUTO_PRIORITY)
+        self._serial = entry.unique_id
 
         self.data = {}
 
@@ -170,7 +171,7 @@ class RinnaiHeater:
 
     def is_connected(self):
         return time.time() - self._last_success < self._timeout
-    
+
     async def inc(self):
         return self.update_data(await self.request("inc"), SENSORS_TELA_ARRAY)
 
