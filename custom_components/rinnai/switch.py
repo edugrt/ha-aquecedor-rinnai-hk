@@ -1,7 +1,7 @@
 import logging
 from typing import Any
 
-from homeassistant.components.switch import SwitchEntity
+from homeassistant.components.switch import SwitchDeviceClass, SwitchEntity
 from homeassistant.core import callback
 
 from .const import DOMAIN
@@ -15,6 +15,9 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
     priority = RinnaiHeaterPrioritySwitch(heater)
     entities.append(priority)
+
+    power = RinnaiHeaterPowerSwitch(heater)
+    entities.append(power)
 
     async_add_entities(entities)
     return True
@@ -61,3 +64,49 @@ class RinnaiHeaterPrioritySwitch(SwitchEntity):
     @property
     def available(self) -> dict[str, Any] | None:
         return self._key in self._heater.data
+
+
+class RinnaiHeaterPowerSwitch(SwitchEntity):
+    """Switch para ligar/desligar o aquecedor, compatível com HomeKit."""
+
+    def __init__(self, heater):
+        self._heater = heater
+
+        self._attr_has_entity_name = True
+        self._attr_translation_key = "power"
+        self._attr_unique_id = f"{self._heater._serial}_{self._attr_translation_key}"
+        self._attr_device_class = SwitchDeviceClass.SWITCH
+
+    async def async_added_to_hass(self):
+        await self._heater.async_add_rinnai_heater_sensor(self._heater_data_updated)
+
+    async def async_will_remove_from_hass(self) -> None:
+        await self._heater.async_remove_rinnai_heater_sensor(self._heater_data_updated)
+
+    @callback
+    def _heater_data_updated(self):
+        self.async_write_ha_state()
+
+    @property
+    def is_on(self):
+        if "status" not in self._heater.data:
+            return False
+        return self._heater.data["status"] != "11"
+
+    async def async_turn_on(self, **kwargs):
+        if not self.is_on:
+            await self._heater.lig()
+            await self._heater.bus()
+
+    async def async_turn_off(self, **kwargs):
+        if self.is_on:
+            await self._heater.lig()
+            await self._heater.bus()
+
+    @property
+    def device_info(self) -> dict[str, Any] | None:
+        return self._heater._device_info()
+
+    @property
+    def available(self) -> dict[str, Any] | None:
+        return "status" in self._heater.data

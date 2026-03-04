@@ -16,6 +16,13 @@
           "on": "mdi:lock",
           "off": "mdi:lock-open"
         }
+      },
+      "power": {
+        "default": "mdi:power",
+        "state": {
+          "on": "mdi:fire",
+          "off": "mdi:fire-off"
+        }
       }
     },
     "button": {

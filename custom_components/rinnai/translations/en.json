@@ -61,7 +61,8 @@
       "flame": { "name": "Flame" }
     },
     "switch": {
-      "priority": { "name": "Priority" }
+      "priority": { "name": "Priority" },
+      "power": { "name": "Power" }
     },
     "button": {
       "temperature_increase": { "name": "Increase Temperature" },

@@ -61,7 +61,8 @@
       "flame": { "name": "Chama" }
     },
     "switch": {
-      "priority": { "name": "Prioridade" }
+      "priority": { "name": "Prioridade" },
+      "power": { "name": "Liga/Desliga" }
     },
     "button": {
       "temperature_increase": { "name": "Aumentar Temperatura" },

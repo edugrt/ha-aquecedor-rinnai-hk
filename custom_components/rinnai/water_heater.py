@@ -7,7 +7,7 @@ from homeassistant.components.water_heater import (
     WaterHeaterEntity,
     WaterHeaterEntityFeature,
 )
-from homeassistant.const import PRECISION_WHOLE, UnitOfTemperature
+from homeassistant.const import PRECISION_WHOLE, UnitOfTemperature, ATTR_TEMPERATURE
 from homeassistant.core import callback
 
 from .const import DOMAIN, TEMPERATURES_MAP
@@ -38,8 +38,11 @@ class RinnaiHeaterWaterHeater(WaterHeaterEntity):
         self._attr_max_temp = 60
         self._attr_temperature_unit = UnitOfTemperature.CELSIUS
         self._attr_operation_list = [STATE_GAS, STATE_OFF]
+        self._attr_precision = PRECISION_WHOLE
         self._attr_supported_features = (
-            WaterHeaterEntityFeature.OPERATION_MODE | WaterHeaterEntityFeature.TARGET_TEMPERATURE
+            WaterHeaterEntityFeature.OPERATION_MODE
+            | WaterHeaterEntityFeature.TARGET_TEMPERATURE
+            | WaterHeaterEntityFeature.ON_OFF
         )
 
     async def async_added_to_hass(self):
@@ -60,7 +63,7 @@ class RinnaiHeaterWaterHeater(WaterHeaterEntity):
     @property
     def target_temperature(self):
         if "target_temperature_raw" in self._heater.data:
-            return TEMPERATURES_MAP[self._heater.data["target_temperature_raw"]] * 0.01
+            return round(TEMPERATURES_MAP[self._heater.data["target_temperature_raw"]] * 0.01)
 
     @property
     def is_on(self):
@@ -73,7 +76,7 @@ class RinnaiHeaterWaterHeater(WaterHeaterEntity):
     async def async_set_temperature(self, **kwargs: Any):
         _LOGGER.debug(f"async_set_temperature: {kwargs}")
 
-        temperature = kwargs.get("temperature") * 100
+        temperature = round(kwargs.get("temperature")) * 100
 
         nearest_temperature = min(TEMPERATURES_MAP.values(), key=lambda x: abs(x - temperature))
         nearest_temperature_index = list(TEMPERATURES_MAP.values()).index(nearest_temperature)
