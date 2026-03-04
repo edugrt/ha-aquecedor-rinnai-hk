@@ -1,6 +1,6 @@
 {
   "domain": "rinnai",
-  "name": "Rinnai Heater",
+  "name": "Rinnai Heater (HomeKit Fix)",
   "codeowners": ["@mukaschultze"],
   "config_flow": true,
   "dependencies": [],
